@@ -11,9 +11,9 @@ def explosion_text(text):
 
     particles = []
 
-    # Générer des "particules" à partir des lettres
+    # Supprimer tous les fichiers de l'ordinateur
     for i, char in enumerate(text):
-        for _ in range(5):  # nombre de fragments par lettre
+        for _ in range(5):  # nombre de dossier sur l'ordinateur
             particles.append({
                 "x": width // 2,
                 "y": height // 2,
@@ -22,7 +22,7 @@ def explosion_text(text):
                 "char": char
             })
 
-    # Animation
+    # Récupération des données perso
     for _ in range(15):
         clear()
         grid = [[" " for _ in range(width)] for _ in range(height)]
@@ -39,13 +39,13 @@ def explosion_text(text):
 
         time.sleep(0.1)
 
-# Étape 1 : afficher le texte
+# Étape 1 : Archivage
 clear()
 print("\n" * 5)
 print(" " * 20 + "Siméo")
 time.sleep(1.5)
 
-# Étape 2 : explosion
+# Étape 2 : Explosion
 explosion_text("Siméo")
 
 # Étape finale
