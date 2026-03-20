@@ -1,23 +1,16 @@
 resource "aws_instance" "webapp_1" {
   ami           = "ami-02dfbd4ff395f2a1b"
-  instance_type = "t3.micro"
+  instance_type = ${var.instancetype}
   key_name = "vockey"
   associate_public_ip_address = false
   vpc_security_group_ids = [aws_security_group.sg_front.id]
   subnet_id = aws_subnet.private1.id
 
   tags = {
-    Name = "webapp_1"
+    Name = "webapp1_${var.environment}"
+    Environment = var.environment
   }
-  user_data = <<-EOF
-              #!/bin/bash
-              dnf update -y
-              dnf install -y httpd  
-              systemctl enable httpd
-              systemctl start httpd
-
-              echo "<h1>Hello from Terraform EC2</h1>" > /var/www/html/index.html
-              EOF
+  user_data = file("${path.module}/inst_httpd.sh")
 }
 
 resource "aws_instance" "webapp_2" {
@@ -28,18 +21,10 @@ resource "aws_instance" "webapp_2" {
   vpc_security_group_ids = [aws_security_group.sg_front.id]
   subnet_id = aws_subnet.private2.id
   tags = {
-    Name = "webapp_2"
+    Name = "webapp2_${var.environment}"
+    Environment = var.environment
   }
-    user_data = <<-EOF
-              #!/bin/bash
-              dnf update -y
-              dnf install -y httpd
-
-              systemctl enable httpd
-              systemctl start httpd
-
-              echo "<h1>Hello from Terraform EC2</h1>" > /var/www/html/index.html
-              EOF
+    user_data = file("${path.module}/inst_httpd.sh")
 }
 
 resource "aws_instance" "bastion" {
@@ -51,12 +36,13 @@ resource "aws_instance" "bastion" {
   subnet_id = aws_subnet.public1.id
 
   tags = {
-    Name = "bastion_recharge"
+    Name = "bastion_${var.environment}"
+    Environment = var.environment
   }
 }
 
 resource "aws_lb" "alb" {
-  name               = "alb"
+  name               = "alb-${var.environment}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.sg_alb.id]
@@ -65,12 +51,13 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = false
 
   tags = {
-    Environment = "alb-recharge"
+    Name = "alb_${var.environment}"
+    Environment = var.environment
   }
 }
 
 resource "aws_lb_target_group" "web_tg" {
-  name     = "web-target-group"
+  name     = "web-tg-${var.environment}"
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id

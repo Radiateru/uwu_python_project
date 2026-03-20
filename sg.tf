@@ -1,29 +1,32 @@
 resource "aws_security_group" "sg_front" {
-  name        = "front_sg_recharge"
+  name        = "front_sg_${var.environment}"
   description = "EZ FOR ENCE"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "front_sg_recharge"
+    Name = "front_sg_${var.environment}"
+    Environment = "${var.environment}"
   }
 }
 resource "aws_security_group" "sg_alb" {
-  name        = "alb_sg_recharge"
+  name        = "alb_sg_${var.environment}"
   description = "EZ FOR ENCE"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "alb_sg_recharge"
+    Name = "alb_sg_${var.environment}"
+    Environment = "${var.environment}"
   }
 }
 
 resource "aws_security_group" "sg_bastion" {
-  name        = "bastion_sg_recharge"
+  name        = "bastion_sg_${var.environment}"
   description = "EZ FOR ENCE"
   vpc_id      = aws_vpc.main.id
 
   tags = {
-    Name = "bastion_sg_recharge"
+    Name = "bastion_sg_${var.environment}"
+    Environment = "${var.environment}"
   }
 }
 
@@ -42,13 +45,13 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_front" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_alb" {
-  security_group_id = aws_security_group.sg_bastion.id
+  security_group_id = aws_security_group.sg_alb.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_bastion" {
-  security_group_id = aws_security_group.sg_alb.id
+  security_group_id = aws_security_group.sg_bastion.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"  
 }
@@ -71,7 +74,7 @@ resource "aws_security_group_rule" "allow_ssh_from_sg_bastion" {
   source_security_group_id = aws_security_group.sg_bastion.id
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_public" {
+resource "aws_vpc_security_group_ingress_rule" "allow_http_public" {
   security_group_id = aws_security_group.sg_alb.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 80
