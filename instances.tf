@@ -1,6 +1,6 @@
 resource "aws_instance" "webapp_1" {
   ami           = "ami-02dfbd4ff395f2a1b"
-  instance_type = ${var.instancetype}
+  instance_type = "${var.instance_type}"
   key_name = "vockey"
   associate_public_ip_address = false
   vpc_security_group_ids = [aws_security_group.sg_front.id]
@@ -15,7 +15,7 @@ resource "aws_instance" "webapp_1" {
 
 resource "aws_instance" "webapp_2" {
   ami           = "ami-02dfbd4ff395f2a1b"
-  instance_type = "t3.micro"
+  instance_type = "${var.instance_type}"
   key_name = "vockey"
   associate_public_ip_address = false
   vpc_security_group_ids = [aws_security_group.sg_front.id]
@@ -29,7 +29,7 @@ resource "aws_instance" "webapp_2" {
 
 resource "aws_instance" "bastion" {
   ami           = "ami-02dfbd4ff395f2a1b"
-  instance_type = "t3.micro"
+  instance_type = "${var.instance_type}"
   key_name = "vockey"
   associate_public_ip_address = true
   vpc_security_group_ids = [aws_security_group.sg_bastion.id]
