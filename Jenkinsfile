@@ -51,7 +51,7 @@ pipeline {
                 input message: "Deploy ${params.ENV} ?"
 
                 sh """
-                terraform apply -auto-approve tfplan
+                terraform apply tfplan
                 """
             }
         }
