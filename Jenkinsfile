@@ -1,20 +1,34 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_REGION = 'us-east-1'
+    }
+
     stages {
-        stage('Build') {
+
+        stage('Checkout') {
             steps {
-                echo 'Building..'
+                git 'https://github.com/Radiateru/uwu_python_project.git'
             }
         }
-        stage('Test') {
+
+        stage('Terraform Init') {
             steps {
-                echo 'Testing..'
+                sh 'terraform init'
             }
         }
-        stage('Deploy') {
+
+        stage('Terraform Plan') {
             steps {
-                echo 'Deploying....'
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                input message: "Déployer l'infra ?"
+                sh 'terraform apply -auto-approve tfplan'
             }
         }
     }
