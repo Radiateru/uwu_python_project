@@ -15,7 +15,14 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                withCredentials([
+                    string(credentialsId: 'aws-id', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-id-accesskey', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    sh '''
+                    export AWS_DEFAULT_REGION=eu-west-1
+                    terraform init
+                    '''
             }
         }
 
