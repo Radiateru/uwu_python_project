@@ -9,8 +9,8 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/Radiateru/uwu_python_project.git'
-            }
+                git branch: 'waf', url: 'https://github.com/Radiateru/uwu_python_project.git'
+             }
         }
 
         stage('Terraform Init') {
