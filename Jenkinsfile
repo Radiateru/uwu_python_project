@@ -57,28 +57,27 @@ pipeline {
         }
 
         stage('Terraform Destroy') {
-    steps {
-        message: "Do you want to destroy ${params.ENV} infrastructure?"
-        script {
-            def destroy = input(
-                message: "Do you want to destroy ${params.ENV} infrastructure?",
-                parameters: [
-                    choice(name: 'CONFIRM', choices: ['no', 'yes'], description: 'Confirm destroy')
-                ]
-            )
+            steps {
+                script {
+                    def destroy = input(
+                        message: "Do you want to destroy ${params.ENV} infrastructure?",
+                        parameters: [
+                            choice(name: 'CONFIRM', choices: ['no', 'yes'], description: 'Confirm destroy')
+                        ]
+                    )
 
-            if (destroy == 'yes') {
-                sh """
-                terraform destroy \
-                  -var-file=env/${params.ENV}.tfvars \
-                  -auto-approve
-                """
-            } else {
-                echo "Destroy skipped"
+                    if (destroy == 'yes') {
+                        sh """
+                        terraform destroy \
+                        -var-file=env/${params.ENV}.tfvars \
+                        -auto-approve
+                        """
+                    } else {
+                        echo "Destroy skipped"
+                    }
+                }
             }
         }
-    }
-}
     }
 
     post {
