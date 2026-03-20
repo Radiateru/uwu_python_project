@@ -58,6 +58,7 @@ pipeline {
 
         stage('Terraform Destroy') {
             steps {
+                echo "Do you want to destroy ${params.ENV} infrastructure?"
                 script {
                     def destroy = input(
                         message: "Do you want to destroy ${params.ENV} infrastructure?",
