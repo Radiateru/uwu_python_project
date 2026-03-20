@@ -1,6 +1,8 @@
 pipeline {
     agent any
-    ansiColor('xterm')
+    options {
+        ansiColor('xterm')
+    }
 
     environment {
         AWS_REGION = 'us-east-1'
