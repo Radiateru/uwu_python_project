@@ -1,7 +1,8 @@
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "VPC_${var.environnement}"
+    Name = "VPC_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -11,7 +12,8 @@ resource "aws_subnet" "public1" {
   availability_zone = "us-east-1a"
 
   tags = {
-    Name = "subnet_recharge_public1"
+    Name = "subnet_public1_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -21,7 +23,8 @@ resource "aws_subnet" "public2" {
   availability_zone = "us-east-1b"
 
   tags = {
-    Name = "subnet_recharge_public2"
+    Name = "subnet_public2_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -31,7 +34,8 @@ resource "aws_subnet" "private1" {
   availability_zone = "us-east-1a"
 
   tags = {
-    Name = "subnet_recharge_private1"
+    Name = "subnet_private1_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -41,7 +45,8 @@ resource "aws_subnet" "private2" {
   availability_zone = "us-east-1b"
 
   tags = {
-    Name = "subnet_recharge_private2"
+    Name = "subnet_private2_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -49,7 +54,8 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "igw_recharge"
+    Name = "igw_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -62,16 +68,22 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "routetable_public_recharge"
+    Name = "routetable_public_${var.environment}"
+    Environment = var.environment
   }
 }
 
+resource "aws_eip" "nat" {
+  domain = "vpc"
+}
+
 resource "aws_nat_gateway" "ngw" {
-  vpc_id            = aws_vpc.main.id
-  availability_mode = "regional"
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public1.id
 
   tags = {
-    Name = "ngw_recharge"
+    Name = "ngw_${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -80,11 +92,12 @@ resource "aws_route_table" "private" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.ngw.id
+    nat_gateway_id = aws_nat_gateway.ngw.id
   }
 
   tags = {
-    Name = "routetable_private_recharge"
+    Name = "routetable_private_${var.environment}"
+    Environment = var.environment
   }
 }
 
